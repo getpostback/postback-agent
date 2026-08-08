@@ -1,0 +1,36 @@
+{
+  "name": "@postback/cli",
+  "version": "0.1.0",
+  "description": "Read-only Postback CLI for developers and AI agents",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "postback": "dist/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "SKILL.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "ci": "npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "commander": "^14.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2",
+    "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1"
+  }
+}
