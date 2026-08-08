@@ -48,6 +48,12 @@ export class PostbackClient {
     );
   }
 
+  funnelPerformance(appId: string, days: number) {
+    return this.get(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/analytics/funnels?days=${days}`,
+    );
+  }
+
   integrationStatus(appId: string) {
     return this.get(
       `/v1/agent/apps/${encodeURIComponent(appId)}/integrations`,

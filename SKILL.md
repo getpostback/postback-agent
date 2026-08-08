@@ -1,12 +1,13 @@
 ---
 name: postback
-description: Inspect Postback mobile attribution, app events, revenue analytics, and integration health through the read-only Postback CLI.
+description: Understand what drives app revenue across acquisition, onboarding funnels, conversion, attribution, events, and integrations through the read-only Postback CLI.
 ---
 
 # Postback CLI
 
-Use this skill when a user asks about their Postback apps, attribution results,
-recent events, revenue analytics, or integration health.
+Use this skill when a user asks what drives app revenue, where users drop during
+onboarding, which acquisition sources create paying users, or whether their
+analytics and integrations are healthy.
 
 ## Safety boundary
 
@@ -65,6 +66,17 @@ postback analytics overview <app-id> --days 30 --json
 
 Use the response's reporting currency. Keep installs, events, trials, refunds,
 revenue, and source metrics distinct.
+
+### Analyze onboarding and conversion funnels
+
+```bash
+postback analytics funnels <app-id> --days 30 --json
+```
+
+Use each funnel's `steps`, `completionRate`, and `largestDropOff` to explain
+where users leave the path to revenue. Treat a large drop as a place to
+investigate, not proof of causation. Compare it with acquisition and revenue
+metrics before recommending what to optimize.
 
 ### Inspect integrations
 

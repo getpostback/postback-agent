@@ -1,7 +1,8 @@
 # Postback CLI
 
-Read-only access to Postback attribution, events, revenue analytics, and
-integration health for developers and AI agents.
+Read-only access to the full path to app revenue for developers and AI agents.
+Connect acquisition, onboarding funnels, conversion, revenue, and attribution
+evidence without sharing dashboard access.
 
 ## Local development
 
@@ -46,6 +47,7 @@ postback auth logout
 postback apps
 postback diagnose <app-id>
 postback analytics overview <app-id>
+postback analytics funnels <app-id>
 postback integrations status <app-id>
 postback events list <app-id>
 postback installs explain <postback-id>

@@ -1,7 +1,7 @@
 {
   "name": "@postback/cli",
   "version": "0.1.0",
-  "description": "Read-only Postback CLI for developers and AI agents",
+  "description": "Read-only app revenue analytics CLI for developers and AI agents",
   "private": true,
   "type": "module",
   "bin": {

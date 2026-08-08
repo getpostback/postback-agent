@@ -20,7 +20,7 @@ type GlobalOptions = {
 export function createProgram() {
   const program = new Command()
     .name('postback')
-    .description('Read-only Postback CLI for developers and AI agents')
+    .description('Read-only app revenue analytics for developers and AI agents')
     .version('0.1.0')
     .option('--json', 'emit compact machine-readable JSON');
 
@@ -94,7 +94,9 @@ export function createProgram() {
       emit(program, result, () => formatDiagnosis(result));
     });
 
-  const analytics = program.command('analytics').description('read app analytics');
+  const analytics = program
+    .command('analytics')
+    .description('understand acquisition, onboarding, conversion, and revenue');
   analytics
     .command('overview <app-id>')
     .description('show installs, events, trials, revenue, and sources')
@@ -105,6 +107,17 @@ export function createProgram() {
         options.days,
       );
       emit(program, result);
+    });
+  analytics
+    .command('funnels <app-id>')
+    .description('show onboarding and conversion performance and drop-offs')
+    .option('--days <days>', 'lookback window from 1 to 90', integer(1, 90), 30)
+    .action(async (appId: string, options: { days: number }) => {
+      const result = await (await authenticatedClient()).funnelPerformance(
+        appId,
+        options.days,
+      );
+      emit(program, result, () => formatFunnels(result));
     });
 
   const integrations = program
@@ -228,6 +241,27 @@ function formatDiagnosis(envelope: AgentEnvelope): string {
   return lines.join('\n');
 }
 
+function formatFunnels(envelope: AgentEnvelope): string {
+  const summaries = objectArray(envelope.data, 'summaries');
+  if (summaries.length === 0) return 'No funnels are available for this app.';
+
+  return summaries
+    .map((summary) => {
+      const name = stringField(summary, 'name') ?? 'Unnamed funnel';
+      const completionRate = numberField(summary, 'completionRate') ?? 0;
+      const dropOff = objectValue(summary.largestDropOff);
+      const fromStep = stringField(dropOff, 'fromStep');
+      const toStep = stringField(dropOff, 'toStep');
+      const dropOffRate = numberField(dropOff, 'dropOffRate');
+      const largestDrop =
+        fromStep && toStep && dropOffRate !== null
+          ? `largest drop ${fromStep} -> ${toStep} (${dropOffRate}%)`
+          : 'no measurable drop-off';
+      return `${name}\t${completionRate}% complete\t${largestDrop}`;
+    })
+    .join('\n');
+}
+
 function integer(min: number, max: number) {
   return (value: string): number => {
     if (!/^\d+$/.test(value)) {
@@ -259,6 +293,12 @@ function objectArray(value: unknown, key: string): Record<string, unknown>[] {
 
 function stringField(value: Record<string, unknown>, key: string): string | null {
   return typeof value[key] === 'string' ? value[key] : null;
+}
+
+function numberField(value: Record<string, unknown>, key: string): number | null {
+  return typeof value[key] === 'number' && Number.isFinite(value[key])
+    ? value[key]
+    : null;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
