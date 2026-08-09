@@ -65,4 +65,66 @@ describe('Postback client', () => {
       expect.objectContaining({ method: 'GET' }),
     );
   });
+
+  it('requests TikTok ad-level performance before an ad action', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      Response.json({
+        data: { ads: [] },
+        meta: { requestId: 'request_tiktok_ads', apiVersion: '2026-08-09' },
+      }),
+    );
+    const client = new PostbackClient({
+      apiUrl: 'https://api.postback.sh',
+      token: `pb_agent_${'a'.repeat(24)}_${'b'.repeat(43)}`,
+      fetchImpl,
+    });
+
+    await client.tiktokAdPerformance('app_123', 30);
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      'https://api.postback.sh/v1/agent/apps/app_123/analytics/tiktok-ads?days=30',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('posts an idempotent action plan without placing the token in the URL or body', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      Response.json({
+        data: {
+          created: true,
+          plan: {
+            id: 'agent_action_123',
+            status: 'pending_approval',
+            approvalUrl: 'https://postback.sh/approve',
+          },
+        },
+        meta: { requestId: 'request_plan', apiVersion: '2026-08-09' },
+      }),
+    );
+    const token = `pb_agent_${'a'.repeat(24)}_${'b'.repeat(43)}`;
+    const client = new PostbackClient({
+      apiUrl: 'https://api.postback.sh',
+      token,
+      fetchImpl,
+    });
+    const change = {
+      actionKind: 'tiktok_ads.campaign_budget',
+      campaignId: 'cmp_1',
+      budget: 120,
+      currency: 'USD',
+      rationale: 'Revenue ROAS is above the approved scaling threshold.',
+      idempotencyKey: 'budget-change-001',
+    };
+
+    await client.createActionPlan('app_123', change);
+
+    const [url, init] = fetchImpl.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(
+      'https://api.postback.sh/v1/agent/apps/app_123/actions/plans',
+    );
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(String(init.body))).toEqual(change);
+    expect(url).not.toContain(token);
+    expect(String(init.body)).not.toContain(token);
+  });
 });

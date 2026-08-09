@@ -28,6 +28,7 @@ function normalizeError(error: unknown) {
       message: error.message,
       status: error.status,
       requestId: error.requestId,
+      details: error.details,
     };
   }
   return {
@@ -35,5 +36,6 @@ function normalizeError(error: unknown) {
     message: error instanceof Error ? error.message : String(error),
     status: null,
     requestId: null,
+    details: null,
   };
 }

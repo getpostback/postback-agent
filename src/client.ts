@@ -12,6 +12,7 @@ export class PostbackApiError extends Error {
     readonly status: number | null,
     readonly code: string,
     readonly requestId: string | null = null,
+    readonly details: unknown = null,
   ) {
     super(message);
     this.name = 'PostbackApiError';
@@ -48,6 +49,12 @@ export class PostbackClient {
     );
   }
 
+  tiktokAdPerformance(appId: string, days: number) {
+    return this.get(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/analytics/tiktok-ads?days=${days}`,
+    );
+  }
+
   funnelPerformance(appId: string, days: number) {
     return this.get(
       `/v1/agent/apps/${encodeURIComponent(appId)}/analytics/funnels?days=${days}`,
@@ -72,7 +79,48 @@ export class PostbackClient {
     return this.get(`/v1/agent/installs/${encodeURIComponent(postbackId)}`);
   }
 
+  createActionPlan(appId: string, input: Record<string, unknown>) {
+    return this.post(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/actions/plans`,
+      input,
+    );
+  }
+
+  listActionPlans(appId: string, limit: number) {
+    return this.get(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/actions/plans?limit=${limit}`,
+    );
+  }
+
+  getActionPlan(appId: string, planId: string) {
+    return this.get(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/actions/plans/${encodeURIComponent(planId)}`,
+    );
+  }
+
+  executeActionPlan(appId: string, planId: string) {
+    return this.post(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/actions/plans/${encodeURIComponent(planId)}/execute`,
+      {},
+    );
+  }
+
   private async get(path: string): Promise<AgentEnvelope> {
+    return this.request(path, 'GET');
+  }
+
+  private async post(
+    path: string,
+    body: Record<string, unknown>,
+  ): Promise<AgentEnvelope> {
+    return this.request(path, 'POST', body);
+  }
+
+  private async request(
+    path: string,
+    method: 'GET' | 'POST',
+    body?: Record<string, unknown>,
+  ): Promise<AgentEnvelope> {
     const fetchImpl = this.options.fetchImpl ?? fetch;
     const retryStatuses = new Set([429, 502, 503, 504]);
     let lastError: unknown;
@@ -80,13 +128,15 @@ export class PostbackClient {
     for (let attempt = 0; attempt < 3; attempt += 1) {
       try {
         const response = await fetchImpl(`${this.options.apiUrl}${path}`, {
-          method: 'GET',
+          method,
           redirect: 'error',
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${this.options.token}`,
-            'User-Agent': 'postback-cli/0.1.0',
+            'User-Agent': 'postback-cli/0.2.0',
+            ...(body ? { 'Content-Type': 'application/json' } : {}),
           },
+          ...(body ? { body: JSON.stringify(body) } : {}),
           signal: AbortSignal.timeout(this.options.timeoutMs ?? 15_000),
         });
         const payload = await readJson(response);
@@ -101,6 +151,7 @@ export class PostbackClient {
               response.status,
               'invalid_response',
               requestId,
+              null,
             );
           }
           return payload;
@@ -111,6 +162,7 @@ export class PostbackClient {
           response.status,
           stringValue(payload, 'error') ?? 'request_failed',
           requestId,
+          objectValue(payload, 'details'),
         );
         if (!retryStatuses.has(response.status) || attempt === 2) throw error;
         lastError = error;
@@ -159,6 +211,11 @@ function stringValue(value: unknown, ...path: string[]): string | null {
     current = (current as Record<string, unknown>)[key];
   }
   return typeof current === 'string' ? current : null;
+}
+
+function objectValue(value: unknown, key: string): unknown {
+  if (!value || typeof value !== 'object') return null;
+  return (value as Record<string, unknown>)[key] ?? null;
 }
 
 function retryDelay(response: Response, attempt: number): number {
