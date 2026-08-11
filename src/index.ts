@@ -1,3 +1,5 @@
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 
 import { registerActionCommands } from './commands/actions.js';
@@ -9,6 +11,7 @@ import { registerInstallCommands } from './commands/installs.js';
 import { registerIntegrationCommands } from './commands/integrations.js';
 import { writeError } from './output.js';
 import { globalOptions } from './runtime.js';
+import { CLI_VERSION } from './version.js';
 
 export function createProgram(): Command {
   const program = new Command()
@@ -16,7 +19,7 @@ export function createProgram(): Command {
     .description(
       'Revenue intelligence and approval-gated Apple Ads and TikTok Ads actions for AI agents',
     )
-    .version('0.2.0')
+    .version(CLI_VERSION)
     .option('--json', 'emit compact JSON (the default)')
     .option('--pretty', 'emit indented JSON')
     .option('--human', 'emit concise human-readable output when available');
@@ -41,6 +44,15 @@ export async function main(argv = process.argv): Promise<void> {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+function isEntrypoint(): boolean {
+  if (!process.argv[1]) return false;
+  try {
+    return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
+}
+
+if (isEntrypoint()) {
   void main();
 }

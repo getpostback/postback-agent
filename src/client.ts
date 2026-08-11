@@ -1,3 +1,5 @@
+import { CLI_VERSION } from './version.js';
+
 export type AgentEnvelope<T = unknown> = {
   data: T;
   meta: {
@@ -133,7 +135,7 @@ export class PostbackClient {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${this.options.token}`,
-            'User-Agent': 'postback-cli/0.2.0',
+            'User-Agent': `postback-cli/${CLI_VERSION}`,
             ...(body ? { 'Content-Type': 'application/json' } : {}),
           },
           ...(body ? { body: JSON.stringify(body) } : {}),

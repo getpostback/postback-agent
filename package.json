@@ -19,13 +19,18 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "ci": "npm run typecheck && npm test && npm run build"
+    "test:coverage": "vitest run --coverage",
+    "ci": "npm run typecheck && npm run test:coverage && npm run build",
+    "package:smoke": "node scripts/package-smoke.mjs",
+    "release:check": "npm run ci && npm run package:smoke",
+    "prepublishOnly": "npm run ci"
   },
   "dependencies": {
     "commander": "^14.0.2"
   },
   "devDependencies": {
     "@types/node": "^25.0.10",
+    "@vitest/coverage-v8": "^4.0.18",
     "tsup": "^8.5.1",
     "typescript": "^6.0.2",
     "vitest": "^4.0.18"
