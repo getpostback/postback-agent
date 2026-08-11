@@ -175,23 +175,26 @@ async function assertMcpRead(token, label) {
   const callResponse = await mcpRequest(token, 'tools/call', {
     name: 'list_apps',
     arguments: {},
-  });
+  }, 'list_apps');
   assert.equal(callResponse.status, 200, `${label} could not call list_apps`);
   const called = await callResponse.json();
   assert.notEqual(called.result?.isError, true, `${label} list_apps returned a tool error`);
 }
 
-function mcpRequest(token, method, params = {}) {
+function mcpRequest(token, method, params = {}, toolName) {
+  const headers = {
+    Accept: 'application/json, text/event-stream',
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'MCP-Protocol-Version': '2026-07-28',
+    'Mcp-Method': method,
+  };
+  if (toolName) headers['Mcp-Name'] = toolName;
+
   return fetch(resource, {
     method: 'POST',
     redirect: 'error',
-    headers: {
-      Accept: 'application/json, text/event-stream',
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'MCP-Protocol-Version': '2026-07-28',
-      'Mcp-Method': method,
-    },
+    headers,
     body: JSON.stringify({
       jsonrpc: '2.0',
       id: `oauth-smoke-${method}`,
