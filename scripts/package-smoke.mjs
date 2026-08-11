@@ -37,7 +37,14 @@ try {
   assert.equal(manifest.version, packageJson.version);
   assert.deepEqual(
     manifest.files.map(({ path }) => path).sort(),
-    ['README.md', 'SKILL.md', 'dist/index.js', 'dist/index.js.map', 'package.json'],
+    [
+      'README.md',
+      'RELEASING.md',
+      'SKILL.md',
+      'dist/index.js',
+      'dist/index.js.map',
+      'package.json',
+    ],
   );
 
   const consumerDirectory = join(temporaryDirectory, 'consumer');

@@ -1,0 +1,42 @@
+name: Publish CLI
+
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: npm-publish-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'getpostback/postback-agent'
+    environment: npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Use the trusted-publishing npm client
+        run: npm install --global npm@12.0.2
+      - run: npm ci
+      - run: npm run release:check
+      - name: Verify release metadata
+        env:
+          POSTBACK_RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
+          POSTBACK_RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: node scripts/release-guard.mjs
+      - name: Publish with OIDC and provenance
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+          NPM_DIST_TAG: ${{ github.event.release.prerelease && 'next' || 'latest' }}
+        run: npm publish --access public --tag "$NPM_DIST_TAG"

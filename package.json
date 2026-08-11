@@ -3,6 +3,14 @@
   "version": "0.2.0",
   "description": "Revenue analytics and approval-gated Apple Ads and TikTok Ads CLI for AI agents",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getpostback/postback-agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/getpostback/postback-agent/issues"
+  },
+  "homepage": "https://postback.sh/docs/cli",
   "type": "module",
   "bin": {
     "postback": "dist/index.js"
@@ -13,6 +21,7 @@
   "files": [
     "dist",
     "README.md",
+    "RELEASING.md",
     "SKILL.md"
   ],
   "scripts": {

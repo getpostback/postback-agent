@@ -18,6 +18,8 @@ node dist/index.js --help
 
 The package remains private until its public package name and license are
 approved. Build and test commands do not publish or deploy anything.
+Maintainers should follow [RELEASING.md](./RELEASING.md) for the guarded npm
+release process.
 
 ## Three hard safety rules
 
