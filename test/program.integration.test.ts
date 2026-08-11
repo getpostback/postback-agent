@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createProgram } from '../src/index.js';
+import { CLI_VERSION } from '../src/version.js';
 
 const TOKEN = `pb_agent_${'a'.repeat(24)}_${'b'.repeat(43)}`;
 
@@ -93,7 +94,7 @@ describe('CLI command integration', () => {
         body: '',
         method: 'GET',
         url: '/v1/agent/apps',
-        userAgent: 'postback-cli/0.2.0',
+        userAgent: `postback-cli/${CLI_VERSION}`,
       }),
     ]);
   });
