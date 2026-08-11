@@ -38,7 +38,13 @@ try {
     '--pack-destination',
     temporaryDirectory,
   ]);
-  const [manifest] = JSON.parse(packed.stdout);
+  const packOutput = JSON.parse(packed.stdout);
+  const manifest = Array.isArray(packOutput)
+    ? packOutput[0]
+    : packOutput.name
+      ? packOutput
+      : packOutput[packageJson.name];
+  assert.ok(manifest, 'npm pack did not return a package manifest');
   assert.equal(manifest.name, packageJson.name);
   assert.equal(manifest.version, packageJson.version);
   assert.deepEqual(
