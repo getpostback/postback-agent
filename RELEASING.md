@@ -68,8 +68,21 @@ testing an approval-gated action proposal and execution.
    npm audit signatures
    ```
 
-6. Run the production CLI and MCP smoke suites and confirm that monitoring has
-   no new authentication, rate-limit, or action-execution errors.
+6. Run the production smoke suites and confirm that monitoring has no new
+   authentication, rate-limit, or action-execution errors:
+
+   ```sh
+   npm run smoke:production:public
+   npm run smoke:production:oauth
+   POSTBACK_TOKEN="..." POSTBACK_TEST_APP_ID="..." \
+     npm run smoke:production:cli
+   POSTBACK_MCP_ACCESS_TOKEN="..." npm run smoke:production:mcp
+   ```
+
+   The OAuth smoke opens an interactive, read-only authorization and revokes
+   its grant after testing PKCE exchange and refresh rotation. Other tokens are
+   supplied only through the environment. The scripts do not print tokens or
+   production response data.
 
 Reference: [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 and [npm provenance](https://docs.npmjs.com/generating-provenance-statements/).

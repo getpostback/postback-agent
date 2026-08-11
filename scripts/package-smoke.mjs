@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -23,6 +23,12 @@ function run(command, args, options = {}) {
     `${command} ${args.join(' ')} failed\n${result.stdout}\n${result.stderr}`,
   );
   return result;
+}
+
+for (const file of await readdir(join(projectRoot, 'scripts'))) {
+  if (file.endsWith('.mjs')) {
+    run(process.execPath, ['--check', join(projectRoot, 'scripts', file)]);
+  }
 }
 
 try {

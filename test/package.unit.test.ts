@@ -30,5 +30,9 @@ describe('CLI release package', () => {
     expect(packageJson.scripts?.prepublishOnly).toBe('npm run ci');
     expect(packageJson.scripts?.releaseCheck).toBeUndefined();
     expect(packageJson.scripts?.['release:check']).toContain('package:smoke');
+    expect(packageJson.scripts?.['smoke:production:public']).toBeDefined();
+    expect(packageJson.scripts?.['smoke:production:oauth']).toBeDefined();
+    expect(packageJson.scripts?.['smoke:production:mcp']).toBeDefined();
+    expect(packageJson.scripts?.['smoke:production:cli']).toBeDefined();
   });
 });

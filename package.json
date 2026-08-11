@@ -32,6 +32,10 @@
     "ci": "npm run typecheck && npm run test:coverage && npm run build",
     "package:smoke": "node scripts/package-smoke.mjs",
     "release:check": "npm run ci && npm run package:smoke",
+    "smoke:production:public": "node scripts/production-public-smoke.mjs",
+    "smoke:production:oauth": "node scripts/production-oauth-smoke.mjs",
+    "smoke:production:mcp": "node scripts/production-mcp-smoke.mjs",
+    "smoke:production:cli": "node scripts/production-cli-smoke.mjs",
     "prepublishOnly": "npm run ci"
   },
   "dependencies": {
