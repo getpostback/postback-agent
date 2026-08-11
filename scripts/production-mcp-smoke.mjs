@@ -27,16 +27,21 @@ let requestSequence = 0;
 
 async function mcp(method, params = {}) {
   requestSequence += 1;
+  const headers = {
+    Accept: 'application/json, text/event-stream',
+    Authorization: `Bearer ${accessToken}`,
+    'Content-Type': 'application/json',
+    'MCP-Protocol-Version': protocolVersion,
+    'Mcp-Method': method,
+  };
+  if (method === 'tools/call' && typeof params.name === 'string') {
+    headers['Mcp-Name'] = params.name;
+  }
+
   const response = await fetch(endpoint, {
     method: 'POST',
     redirect: 'error',
-    headers: {
-      Accept: 'application/json, text/event-stream',
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-      'MCP-Protocol-Version': protocolVersion,
-      'Mcp-Method': method,
-    },
+    headers,
     body: JSON.stringify({
       jsonrpc: '2.0',
       id: `production-smoke-${requestSequence}`,
