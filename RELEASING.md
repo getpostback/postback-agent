@@ -11,10 +11,8 @@ npm provenance; it does not use a stored write token.
 2. Create a GitHub environment named `npm` with a required maintainer reviewer.
 3. Confirm that the `@postback` npm organization owns the `@postback/cli` name
    and that at least two maintainers have publishing access and 2FA enabled.
-4. Approve an SPDX license, add `LICENSE`, then update `package.json`:
-   - set `license` to the approved SPDX identifier;
-   - set `private` to `false`;
-   - set `publishConfig.access` to `public`.
+4. Verify that `LICENSE` contains GNU AGPL v3 and that `package.json` declares
+   `AGPL-3.0-only`, `private: false`, and public publishing access.
 5. After the package exists in npm, configure its trusted publisher with npm
    CLI 12 or newer:
 

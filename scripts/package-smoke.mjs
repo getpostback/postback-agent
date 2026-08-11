@@ -44,6 +44,8 @@ try {
   assert.deepEqual(
     manifest.files.map(({ path }) => path).sort(),
     [
+      'LICENSE',
+      'NOTICE',
       'README.md',
       'RELEASING.md',
       'SKILL.md',

@@ -10,15 +10,26 @@ describe('CLI release package', () => {
     ) as {
       bin?: Record<string, string>;
       files?: string[];
+      license?: string;
+      private?: boolean;
+      publishConfig?: { access?: string; provenance?: boolean };
       scripts?: Record<string, string>;
       repository?: { type?: string; url?: string };
       version?: string;
     };
 
     expect(CLI_VERSION).toBe(packageJson.version);
+    expect(packageJson.private).toBe(false);
+    expect(packageJson.license).toBe('AGPL-3.0-only');
+    expect(packageJson.publishConfig).toEqual({
+      access: 'public',
+      provenance: true,
+    });
     expect(packageJson.bin).toEqual({ postback: 'dist/index.js' });
     expect(packageJson.files).toEqual([
       'dist',
+      'LICENSE',
+      'NOTICE',
       'README.md',
       'RELEASING.md',
       'SKILL.md',
