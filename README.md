@@ -1,12 +1,13 @@
 # Postback CLI
 
-Revenue intelligence and controlled Apple Ads and TikTok Ads changes for
-developers and AI agents.
+Match tracked social views to downloads and revenue, then run controlled
+Apple Ads and TikTok Ads changes from a terminal or an AI agent.
 
-The CLI connects acquisition, onboarding funnels, trials, subscription
-revenue, and attribution evidence. It can also propose campaign, ad group, and
-ad or keyword changes. Ad account writes only run after a human approves the
-exact plan in Postback.
+The CLI ranks TikTok, Instagram, and Facebook posts by estimated organic
+installs and revenue, including by country. It also reads funnels, trials,
+subscription revenue, and attribution evidence, and can propose campaign, ad
+group, and ad or keyword changes. Ad account writes only run after a human
+approves the exact plan in Postback.
 
 ## Local development
 
@@ -62,8 +63,10 @@ rejected so an agent cannot redirect a token to a third party.
 postback auth status
 postback apps
 
-# 2. Read revenue and funnel evidence
+# 2. See which videos brought downloads, then read funnel evidence
 postback analytics overview <app-id> --days 30
+postback analytics content <app-id> --days 30 --country FR
+postback social accounts <app-id>
 postback analytics funnels <app-id> --days 30
 postback analytics tiktok-ads <app-id> --days 30
 
@@ -97,6 +100,9 @@ postback auth logout
 postback apps
 postback diagnose <app-id> [--hours 24]
 postback analytics overview <app-id> [--days 30]
+postback analytics content <app-id> [--days 30] [--country FR] [--platform tiktok]
+postback social accounts <app-id>
+postback social posts <app-id> [--days 30] [--platform tiktok]
 postback analytics funnels <app-id> [--days 30]
 postback analytics tiktok-ads <app-id> [--days 30]
 postback integrations status <app-id>

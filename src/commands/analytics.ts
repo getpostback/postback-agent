@@ -39,4 +39,20 @@ export function registerAnalyticsCommands(program: Command): void {
         await (await authenticatedClient()).tiktokAdPerformance(appId, options.days),
       );
     });
+
+  analytics
+    .command('content <app-id>')
+    .description('match tracked video views to organic installs and revenue')
+    .option('--days <days>', 'lookback window from 1 to 90', integer(1, 90), 30)
+    .option('--country <country>', 'ISO country code such as FR or US')
+    .option('--platform <platform>', 'tiktok, instagram, or facebook')
+    .action(async (
+      appId: string,
+      options: { days: number; country?: string; platform?: string },
+    ) => {
+      emit(
+        program,
+        await (await authenticatedClient()).contentPerformance(appId, options),
+      );
+    });
 }

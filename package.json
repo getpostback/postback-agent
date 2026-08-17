@@ -1,7 +1,7 @@
 {
   "name": "@postback/cli",
   "version": "0.2.0",
-  "description": "Revenue analytics and approval-gated Apple Ads and TikTok Ads CLI for AI agents",
+  "description": "Match social views to downloads and revenue, then run approval-gated Apple Ads and TikTok Ads actions",
   "private": false,
   "license": "AGPL-3.0-only",
   "repository": {

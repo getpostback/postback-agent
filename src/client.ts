@@ -57,6 +57,35 @@ export class PostbackClient {
     );
   }
 
+  socialAccounts(appId: string) {
+    return this.get(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/social/accounts`,
+    );
+  }
+
+  socialPosts(
+    appId: string,
+    options: { days: number; platform?: string },
+  ) {
+    const query = new URLSearchParams({ days: String(options.days) });
+    if (options.platform) query.set('platform', options.platform);
+    return this.get(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/social/posts?${query.toString()}`,
+    );
+  }
+
+  contentPerformance(
+    appId: string,
+    options: { days: number; country?: string; platform?: string },
+  ) {
+    const query = new URLSearchParams({ days: String(options.days) });
+    if (options.country) query.set('country', options.country);
+    if (options.platform) query.set('platform', options.platform);
+    return this.get(
+      `/v1/agent/apps/${encodeURIComponent(appId)}/analytics/content?${query.toString()}`,
+    );
+  }
+
   funnelPerformance(appId: string, days: number) {
     return this.get(
       `/v1/agent/apps/${encodeURIComponent(appId)}/analytics/funnels?days=${days}`,

@@ -87,6 +87,31 @@ describe('Postback client', () => {
     );
   });
 
+  it('requests content performance with country and platform filters', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      Response.json({
+        data: { posts: [] },
+        meta: { requestId: 'request_content', apiVersion: '2026-08-09' },
+      }),
+    );
+    const client = new PostbackClient({
+      apiUrl: 'https://api.postback.sh',
+      token: `pb_agent_${'a'.repeat(24)}_${'b'.repeat(43)}`,
+      fetchImpl,
+    });
+
+    await client.contentPerformance('app_123', {
+      days: 14,
+      country: 'FR',
+      platform: 'tiktok',
+    });
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      'https://api.postback.sh/v1/agent/apps/app_123/analytics/content?days=14&country=FR&platform=tiktok',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
   it('posts an idempotent action plan without placing the token in the URL or body', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(
       Response.json({

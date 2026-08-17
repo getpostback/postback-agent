@@ -10,6 +10,7 @@ describe('CLI command structure', () => {
       'apps',
       'diagnose',
       'analytics',
+      'social',
       'integrations',
       'events',
       'installs',

@@ -1,16 +1,17 @@
 ---
 name: postback
-description: Understand what drives mobile app revenue across acquisition, onboarding, conversion, and attribution, then propose approval-gated Apple Ads and TikTok Ads changes through the Postback CLI.
+description: Match tracked social video views to app downloads and revenue, including by country, then propose approval-gated Apple Ads and TikTok Ads changes through the Postback CLI.
 homepage: https://postback.sh/agents
 metadata: {"openclaw":{"emoji":"📈","requires":{"bins":["postback"],"env":[]}}}
 ---
 
 # Postback CLI
 
-Use Postback to connect acquisition spend with onboarding behavior, trials,
-paid subscriptions, and revenue. The CLI can read evidence and propose bounded
-Apple Ads or TikTok Ads changes. A human must approve every external write in
-the Postback dashboard.
+Use Postback to match TikTok, Instagram, and Facebook views to organic
+installs and revenue, then connect that to onboarding, trials, and paid
+subscriptions. The CLI can read that evidence and propose bounded Apple Ads
+or TikTok Ads changes. A human must approve every external write in the
+Postback dashboard.
 
 ## Four hard rules
 
@@ -47,20 +48,24 @@ to inspect it. Do not parse `--human` output in an automation.
 1. Authenticate with `postback auth status`.
 2. Discover the app with `postback apps`.
 3. Diagnose data health with `postback diagnose` if evidence is missing.
-4. Read revenue and source performance with `analytics overview`.
-5. Read onboarding and conversion drop-offs with `analytics funnels`.
-6. Create one idempotent action plan with an evidence-based reason.
-7. Return the plan's `approvalUrl` to the user and wait for dashboard approval.
-8. Read the plan until `status` is `approved`.
-9. Run `actions execute` once. Server-side idempotency makes a transport retry
-   safe, but do not create a second plan for the same decision.
-10. Report the verified `afterState`, or explain `stale` or `failed` without
+4. Read country and source performance with `analytics overview`.
+5. Rank tracked videos by estimated organic installs and revenue with `analytics content`.
+6. Read onboarding and conversion drop-offs with `analytics funnels`.
+7. Create one idempotent action plan with an evidence-based reason.
+8. Return the plan's `approvalUrl` to the user and wait for dashboard approval.
+9. Read the plan until `status` is `approved`.
+10. Run `actions execute` once. Server-side idempotency makes a transport retry
+    safe, but do not create a second plan for the same decision.
+11. Report the verified `afterState`, or explain `stale` or `failed` without
     pretending the change succeeded.
 
 ## Read revenue evidence
 
 ```bash
 postback analytics overview <app-id> --days 30
+postback analytics content <app-id> --days 30 --country FR
+postback social accounts <app-id>
+postback social posts <app-id> --days 30
 postback analytics funnels <app-id> --days 30
 postback analytics tiktok-ads <app-id> --days 30
 ```

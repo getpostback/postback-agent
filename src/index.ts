@@ -9,6 +9,7 @@ import { registerAuthCommands } from './commands/auth.js';
 import { registerEventCommands } from './commands/events.js';
 import { registerInstallCommands } from './commands/installs.js';
 import { registerIntegrationCommands } from './commands/integrations.js';
+import { registerSocialCommands } from './commands/social.js';
 import { writeError } from './output.js';
 import { globalOptions } from './runtime.js';
 import { CLI_VERSION } from './version.js';
@@ -17,7 +18,7 @@ export function createProgram(): Command {
   const program = new Command()
     .name('postback')
     .description(
-      'Revenue intelligence and approval-gated Apple Ads and TikTok Ads actions for AI agents',
+      'Match social views to downloads and revenue, then propose approval-gated Apple Ads and TikTok Ads actions',
     )
     .version(CLI_VERSION)
     .option('--json', 'emit compact JSON (the default)')
@@ -27,6 +28,7 @@ export function createProgram(): Command {
   registerAuthCommands(program);
   registerAppCommands(program);
   registerAnalyticsCommands(program);
+  registerSocialCommands(program);
   registerIntegrationCommands(program);
   registerEventCommands(program);
   registerInstallCommands(program);
